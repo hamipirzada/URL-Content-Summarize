@@ -7,37 +7,42 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain.docstore.document import Document
 import asyncio
 
-st.set_page_config(page_title="Langchain: Summarize text From YouTube or Website", page_icon="🦜️")
-st.title("🦜️Summarize Text From YouTube or Website")
-st.subheader = ("Summarize URL")
+# Streamlit app configuration
+st.set_page_config(page_title="Langchain: Summarize Text From YouTube or Website", page_icon="🦜️")
+st.title("🦜️ Summarize Text From YouTube or Website")
+st.subheader("Summarize URL")
 
+# Sidebar for Groq API key input
 with st.sidebar:
     groq_api_key = st.text_input("Groq API Key", value="", type="password")
 
+# URL input field
 generic_url = st.text_input("URL:", label_visibility="visible")
 
-# Check if the Groq API Key is provided
+# Initialize the Groq model if API key is provided
+llm = None
 if groq_api_key.strip():
-    # Initialize the Groq model
     try:
         llm = ChatGroq(model="Gemma-7b-It", groq_api_key=groq_api_key)
     except Exception as e:
         st.error(f"Error initializing Groq API: {str(e)}")
 
-# Define the prompt template
+# Define the prompt template for summarization
 prompt_template = """
 Summarize the following content:
-{documents}
+{input_documents}
 """
-prompt = PromptTemplate(template=prompt_template, input_variables=["documents"])
+prompt = PromptTemplate(template=prompt_template, input_variables=["input_documents"])
 
+# Function to fetch documents from the given URL
 async def fetch_documents(url):
     if "youtube.com" in url:
         try:
             # Attempt to fetch an English transcript
             loader = YoutubeLoader.from_youtube_url(url, add_video_info=True, language="en")
-        except Exception as e:
-            st.error(f"Could not retrieve an English transcript. Trying Hindi...")
+        except Exception:
+            # Fall back to Hindi if English transcript is unavailable
+            st.error("Could not retrieve an English transcript. Trying Hindi...")
             loader = YoutubeLoader.from_youtube_url(url, add_video_info=True, language="hi")
     else:
         loader = UnstructuredURLLoader(urls=[url], ssl_verify=False, headers={
@@ -46,6 +51,7 @@ async def fetch_documents(url):
     documents = loader.load()
     return documents
 
+# Button to trigger summarization
 if st.button("Summarize Content"):
     if not groq_api_key.strip() or not generic_url.strip():
         st.error("Please enter the information to get started.")
