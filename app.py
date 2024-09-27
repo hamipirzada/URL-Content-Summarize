@@ -9,7 +9,7 @@ import asyncio
 
 st.set_page_config(page_title="Langchain: Summarize text From YouTube or Website", page_icon="🦜️")
 st.title("🦜️Summarize Text From YouTube or Website")
-st.subheader = ("Summarize URL")
+st.subheader("Summarize URL")
 
 with st.sidebar:
     groq_api_key = st.text_input("Groq API Key", value="", type="password")
@@ -56,8 +56,8 @@ if st.button("Summarize Content"):
                 documents = asyncio.run(fetch_documents(generic_url))
 
                 if documents and isinstance(documents, list) and all(isinstance(doc, Document) for doc in documents):
-                    # Chain for summarization
-                    chain = load_summarize_chain(llm, chain_type="map-reduce", prompt=prompt)
+                    # Chain for summarization using MapReduce
+                    chain = load_summarize_chain(llm, chain_type="map_reduce", prompt=prompt)
 
                     # Run the summarization chain with the documents as input
                     summary = chain.run(input_documents=documents)
