@@ -24,11 +24,12 @@ if groq_api_key.strip():
     except Exception as e:
         st.error(f"Error initializing Groq API: {str(e)}")
 
+# Define the prompt template
 prompt_template = """
-Provide a summary of the following content in 1000 words:
-content: {text}
+Summarize the following content:
+{documents}
 """
-prompt = PromptTemplate(template=prompt_template, input_variables=["text"])
+prompt = PromptTemplate(template=prompt_template, input_variables=["documents"])
 
 async def fetch_documents(url):
     if "youtube.com" in url:
