@@ -10,7 +10,7 @@ import asyncio
 # Streamlit app configuration
 st.set_page_config(page_title="Langchain: Summarize Text From YouTube or Website", page_icon="🦜️")
 st.title("🦜️ Summarize Text From YouTube or Website")
-st.subheader("Summarize URL")
+st.subheader = ("Summarize URL")
 
 # Sidebar for Groq API key input
 with st.sidebar:
