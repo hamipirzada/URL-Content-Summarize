@@ -64,7 +64,7 @@ if st.button("Summarize Content"):
 
                 if documents and isinstance(documents, list) and all(isinstance(doc, Document) for doc in documents):
                     # Chain for summarization using MapReduce
-                    chain = load_summarize_chain(llm, chain_type="map_reduce", prompt=prompt)
+                    chain = load_summarize_chain(llm, chain_type="stuff", prompt=prompt)
 
                     # Run the summarization chain with the documents as input
                     summary = chain.run(input_documents=documents)
