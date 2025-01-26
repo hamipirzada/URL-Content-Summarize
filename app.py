@@ -14,6 +14,7 @@ nltk.data.path.append(nltk_data_path)
 nltk.download("punkt", download_dir=nltk_data_path)
 nltk.download("punkt")
 nltk.download("punkt_tab")
+nltk.download('averaged_perceptron_tagger_eng')
 
 import validators
 import streamlit as st
