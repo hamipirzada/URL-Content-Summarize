@@ -1,14 +1,16 @@
 import nltk
 import os
 
-# Set the path to a writable location
+# Set the path to a writable location for nltk data
 nltk_data_path = os.path.join(os.path.expanduser("~"), "nltk_data")
 
 # Ensure the directory exists
 os.makedirs(nltk_data_path, exist_ok=True)
 
-# Set the NLTK data path and download the 'punkt' resource
+# Add the custom path to nltk's search path
 nltk.data.path.append(nltk_data_path)
+
+# Download the 'punkt' resource to the writable path
 nltk.download("punkt", download_dir=nltk_data_path)
 
 
