@@ -20,7 +20,7 @@ generic_url = st.text_input("URL:", label_visibility="visible")
 if groq_api_key.strip():
     # Initialize the Groq model
     try:
-        llm = ChatGroq(model="Gemma-7b-It", groq_api_key=groq_api_key)
+        llm = ChatGroq(model="gemma2-9b-it", groq_api_key=groq_api_key)
     except Exception as e:
         st.error(f"Error initializing Groq API: {str(e)}")
 
