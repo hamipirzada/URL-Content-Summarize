@@ -1,3 +1,7 @@
+import nltk
+nltk.data.path.append("/app/nltk_data")
+nltk.download("punkt", download_dir="/app/nltk_data")
+
 import validators
 import streamlit as st
 from langchain_groq import ChatGroq
