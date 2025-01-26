@@ -8,8 +8,8 @@ from langchain.docstore.document import Document
 import asyncio
 
 st.set_page_config(page_title="Langchain: Summarize text From YouTube or Website", page_icon="🦜️")
-st.title("🦜️Summarize Text From YouTube or Website")
-st.subheader = ("Summarize URL")
+st.title("🦜 Summarize Text From YouTube or Website")
+st.subheader("Summarize URL")
 
 with st.sidebar:
     groq_api_key = st.text_input("Groq API Key", value="", type="password")
@@ -17,6 +17,7 @@ with st.sidebar:
 generic_url = st.text_input("URL:", label_visibility="visible")
 
 # Check if the Groq API Key is provided
+llm = None
 if groq_api_key.strip():
     # Initialize the Groq model
     try:
@@ -31,19 +32,23 @@ content: {text}
 prompt = PromptTemplate(template=prompt_template, input_variables=["text"])
 
 async def fetch_documents(url):
-    if "youtube.com" in url:
-        try:
+    try:
+        if "youtube.com" in url:
             # Attempt to fetch an English transcript
-            loader = YoutubeLoader.from_youtube_url(url, add_video_info=True, language="en")
-        except Exception as e:
-            st.error(f"Could not retrieve an English transcript. Trying Hindi...")
-            loader = YoutubeLoader.from_youtube_url(url, add_video_info=True, language="hi")
-    else:
-        loader = UnstructuredURLLoader(urls=[url], ssl_verify=False, headers={
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
-        })
-    documents = loader.load()
-    return documents
+            try:
+                loader = YoutubeLoader.from_youtube_url(url, add_video_info=True, language="en")
+            except Exception:
+                st.warning("Could not retrieve an English transcript. Trying Hindi...")
+                loader = YoutubeLoader.from_youtube_url(url, add_video_info=True, language="hi")
+        else:
+            loader = UnstructuredURLLoader(urls=[url], ssl_verify=True, headers={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+            })
+        documents = loader.load()
+        return documents
+    except Exception as e:
+        st.error(f"Error loading documents: {str(e)}")
+        return []
 
 if st.button("Summarize Content"):
     if not groq_api_key.strip() or not generic_url.strip():
@@ -53,7 +58,7 @@ if st.button("Summarize Content"):
     else:
         try:
             with st.spinner("Fetching content..."):
-                documents = asyncio.run(fetch_documents(generic_url))
+                documents = asyncio.run(fetch_documents(generic_url))  # Alternative: `await fetch_documents(generic_url)`
 
                 if documents and isinstance(documents, list) and all(isinstance(doc, Document) for doc in documents):
                     # Chain for summarization
@@ -65,5 +70,7 @@ if st.button("Summarize Content"):
                     st.success(summary)
                 else:
                     st.error("Failed to load content. Please check the URL or the document loader.")
+        except RuntimeError as re:
+            st.error(f"Runtime error: {str(re)}")
         except Exception as e:
-            st.exception(f"An error occurred: {str(e)}")
+            st.error(f"An error occurred: {str(e)}")
