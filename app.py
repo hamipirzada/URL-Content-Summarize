@@ -9,7 +9,7 @@ import asyncio
 
 st.set_page_config(page_title="Langchain: Summarize text From YouTube or Website", page_icon="🦜️")
 st.title("🦜 Summarize Text From YouTube or Website")
-st.subheader("Summarize URL")
+st.subheader("Summarize URL")  # Corrected this line
 
 with st.sidebar:
     groq_api_key = st.text_input("Groq API Key", value="", type="password")
