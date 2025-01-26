@@ -12,7 +12,8 @@ nltk.data.path.append(nltk_data_path)
 
 # Download the 'punkt' resource to the writable path
 nltk.download("punkt", download_dir=nltk_data_path)
-
+nltk.download("punkt")
+nltk.download("punkt_tab")
 
 import validators
 import streamlit as st
